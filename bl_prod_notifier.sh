@@ -1,7 +1,7 @@
 #!/bin/bash
 eos_proc_block ()
 {
-BLOCKS=`$DATADIR/cleos.sh get table eosio eosio producers -l 10000 |grep -A 7 atticlabeosb | grep '"unpaid_blocks":' | awk -F "," '{print $1}' | awk '{print $2}'`
+BLOCKS=`$DATADIR/cleos.sh get table eosio eosio producers -l 10000 |grep -A 7 $ACCOUNT | grep '"unpaid_blocks":' | awk -F "," '{print $1}' | awk '{print $2}'`
 if [ -z $BLOCKS ]; then
 	echo "node is down"
 else
@@ -24,15 +24,15 @@ fi
 
 check_blacklist()
 {
-SUCCESS=`/opt/theBlacklist/check_blacklist.sh | grep success | awk '{print $1}'`
+SUCCESS=`$CHECKBLACKLIST | grep success | awk '{print $1}'`
 if [ "$SUCCESS" == "success:" ]; then
-	HASH=`/opt/theBlacklist/check_blacklist.sh | grep success | awk '{print $2}'`
+	HASH=`$CHECKBLACKLIST | grep success | awk '{print $2}'`
 	echo Blacklist hash:$HASH
 	curl -s -X POST https://api.telegram.org/bot$BOTKEY/sendMessage -d chat_id=$CHATID -d text="🛡 Blacklist hash: $HASH"
 else
-	ERR=`/opt/theBlacklist/check_blacklist.sh`
+	ERR=`$CHECKBLACKLIST`
 	echo $ERR
-	curl -s -X POST https://api.telegram.org/bot$BOTKEY/sendMessage -d chat_id=$CHATID -d text="📮 $(/opt/theBlacklist/check_blacklist.sh)"
+	curl -s -X POST https://api.telegram.org/bot$BOTKEY/sendMessage -d chat_id=$CHATID -d text="📮 $($CHECKBLACKLIST)"
 fi
 }
 
@@ -43,9 +43,9 @@ HASHFILE=`cat /opt/BP-block-producing-notifier/eos-hash`
 if [ -z $HASHFILE ]; then
 	echo "22" > ${EOSHASH};
 fi
-SUCCESS=`/opt/theBlacklist/check_blacklist.sh | grep success | awk '{print $1}'`
+SUCCESS=`$CHECKBLACKLIST | grep success | awk '{print $1}'`
 if [ "$SUCCESS" == "success:" ]; then
-	HASH=`/opt/theBlacklist/check_blacklist.sh | grep success | awk '{print $2}'`
+	HASH=`$CHECKBLACKLIST | grep success | awk '{print $2}'`
 	echo Blacklist hash:$HASH
 if [ "$HASH" != "$HASHFILE" ]; then
 	echo "Hash is changed. The old hash is $HASHFILE. The new hash is $HASH."
@@ -53,13 +53,15 @@ if [ "$HASH" != "$HASHFILE" ]; then
 	echo $HASH > ${EOSHASH};
 fi
 else
-	ERR=`/opt/theBlacklist/check_blacklist.sh`
+	ERR=`$CHECKBLACKLIST`
 	echo $ERR
-	curl -s -X POST https://api.telegram.org/bot$BOTKEY/sendMessage -d chat_id=$CHATID -d text="📮 $(/opt/theBlacklist/check_blacklist.sh)"
+	curl -s -X POST https://api.telegram.org/bot$BOTKEY/sendMessage -d chat_id=$CHATID -d text="📮 $($CHECKBLACKLIST)"
 fi
 }
 
 DATADIR=/opt/EOSmainNet
+CHECKBLACKLIST=/opt/theBlacklist/check_blacklist.sh
+ACCOUNT=YourAccount
 CHATID=111111111
 BOTKEY=222222222:AAFGzXt5kTy111111-51s1111111j_11111
 NODEIP=`cat /opt/BP-block-producing-notifier/eos-ips`
