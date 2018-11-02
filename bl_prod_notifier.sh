@@ -61,7 +61,7 @@ fi
 
 DATADIR=/opt/EOSmainNet
 CHECKBLACKLIST=/opt/theBlacklist/check_blacklist.sh
-ACCOUNT=YourAccount
+ACCOUNT=YourEOSAccount
 CHATID=111111111
 BOTKEY=222222222:AAFGzXt5kTy111111-51s1111111j_11111
 NODEIP=`cat /opt/BP-block-producing-notifier/eos-ips`
