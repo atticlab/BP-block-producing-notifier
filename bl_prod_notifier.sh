@@ -38,8 +38,8 @@ fi
 
 check_change_blacklist()
 {
-EOSHASH="/opt/BP-block-producing-notifier/eos-hash"
-HASHFILE=`cat /opt/BP-block-producing-notifier/eos-hash`
+EOSHASH="/opt/block-producing-notifier/eos-hash"
+HASHFILE=`cat /opt/block-producing-notifier/eos-hash`
 if [ -z $HASHFILE ]; then
 	echo "22" > ${EOSHASH};
 fi
@@ -64,7 +64,7 @@ CHECKBLACKLIST=/opt/theBlacklist/check_blacklist.sh
 ACCOUNT=YourEOSAccount
 CHATID=111111111
 BOTKEY=222222222:AAFGzXt5kTy111111-51s1111111j_11111
-NODEIP=`cat /opt/BP-block-producing-notifier/eos-ips`
+NODEIP=`cat /opt/block-producing-notifier/eos-ips`
 while true; do
 	eos_proc_block
 	check_blacklist
