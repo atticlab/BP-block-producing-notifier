@@ -2,7 +2,7 @@
 ### Install block-producing-notifier:  
 cd /opt && sudo git clone https://github.com/atticlab/block-producing-notifier.git 
 sudo chmod +x /opt/block-producing-notifier/installbot.sh 
-/opt/block-producing-notifier/installbot.sh 
+##### /opt/block-producing-notifier/installbot.sh 
 ### Start Bot: 
 sudo supervisorctl reread 
 sudo supervisorctl update 
