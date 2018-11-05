@@ -1,0 +1,1 @@
+### block-producing-notifier is a bot that checks the number of produced blocks, the status of the node, the change in the content of the blacklist and  informed about these events in the telegram mesenger.
