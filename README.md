@@ -4,7 +4,7 @@ $ cd /opt && sudo git clone https://github.com/atticlab/block-producing-notifier
 
 $ sudo chmod +x /opt/block-producing-notifier/installbot.sh 
 
-$ sudo /opt/block-producing-notifier/installbot.sh 
+$ /opt/block-producing-notifier/installbot.sh 
 ### Start Bot: 
 $ sudo supervisorctl reread 
 
