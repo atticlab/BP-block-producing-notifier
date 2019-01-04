@@ -1,7 +1,15 @@
 #!/bin/bash
 eos_proc_block ()
 {
-BLOCKS=`$DATADIR/cleos.sh get table eosio eosio producers -l 10000 |grep -A 7 atticlabeosb | grep '"unpaid_blocks":' | awk -F "," '{print $1}' | awk '{print $2}'`
+CLSTAT=$(ls $DATADIR | grep cleos.sh$ | wc -l)
+if [ "$CLSTAT" -eq "1" ]; then
+        BLOCKS=`$DATADIR/cleos.sh get table eosio eosio producers -l 10000 |grep -A 7 atticlabeosb | grep '"unpaid_blocks":' | awk -F "," '{print $1}' | awk '{print $2}'`
+else
+	NODEOSBINDIR=$(cat notifier.conf | grep nodeosbindir | awk -F "=" '{print $2}')
+	NODEHOST=$(cat notifier.conf | grep nodehost | awk -F "=" '{print $2}')
+	WALLETHOST=$(cat notifier.conf | grep wallethost | awk -F "=" '{print $2}')
+	BLOCK=$($NODEOSBINDIR/cleos -u http://$NODEHOST --wallet-url http://$WALLETHOST get table eosio eosio producers -l 10000 |grep -A 7 atticlabeosb | grep '"unpaid_blocks":' | awk -F "," '{print $1}' | awk '{print $2}')
+fi
 if [ -z $BLOCKS ]; then
         echo "node is down"
 else
@@ -38,11 +46,16 @@ fi
 
 check_change_blacklist()
 {
-EOSHASH="/opt/BP-block-producing-notifier/eos-hash"
-HASHFILE=`cat /opt/BP-block-producing-notifier/eos-hash`
+EOSHASH="$BOTDIR/eos-hash"
+HASHFILE=$(cat $BOTDIR/eos-hash)
 if [ -z $HASHFILE ]; then
         echo "22" > ${EOSHASH};
 fi
+GETHASH=$($CHECKBLACKLIST);
+if [ -n "$GETHASH" ]; then
+if [ "$GETHASH" = "serverdown" ]; then
+   echo "server down"
+else
 SUCCESS=`$CHECKBLACKLIST | grep success | awk '{print $1}'`
 if [ "$SUCCESS" == "success:" ]; then
         HASH=`$CHECKBLACKLIST | grep success | awk '{print $2}'`
@@ -56,6 +69,8 @@ else
         ERR=`$CHECKBLACKLIST`
         echo $ERR
         curl -s -X POST https://api.telegram.org/bot$BOTKEY/sendMessage -d chat_id=$CHATID -d text="📮 $($CHECKBLACKLIST)"
+fi
+fi
 fi
 }
 BOTDIR=$(cat notifier.conf | grep botdir | awk -F "=" '{print $2}')
