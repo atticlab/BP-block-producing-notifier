@@ -58,12 +58,12 @@ else
         curl -s -X POST https://api.telegram.org/bot$BOTKEY/sendMessage -d chat_id=$CHATID -d text="📮 $($CHECKBLACKLIST)"
 fi
 }
-
-DATADIR=/opt/EOSmainNet
-CHECKBLACKLIST=/opt/BP-block-producing-notifier/check_blacklist_bot.sh
-CHATID=111111111
-BOTKEY=222222222:AAFGzXt5kTy111111-51s1111111j_11111
-NODEIP=`cat /opt/BP-block-producing-notifier/eos-ips`
+BOTDIR=$(cat notifier.conf | grep botdir | awk -F "=" '{print $2}')
+DATADIR=$(cat notifier.conf | grep eosdatadir | awk -F "=" '{print $2}')
+CHECKBLACKLIST=$BOTDIR/check_blacklist_bot.sh
+CHATID=$(cat notifier.conf | grep chatid | awk -F "=" '{print $2}')
+BOTKEY=$(cat notifier.conf | grep botkey | awk -F "=" '{print $2}')
+NODEIP=$(cat $BOTDIR/eos-ips)
 while true; do
         eos_proc_block
         check_blacklist

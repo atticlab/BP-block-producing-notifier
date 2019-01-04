@@ -1,8 +1,7 @@
 #!/bin/bash
 
-default_api="https://api.eoslaomao.com"
-#default_api="https://api1.eosasia.one"
-default_config="/opt/EOSmainNet/config.ini"
+default_api=$(cat notifier.conf | grep default_api | awk -F "=" '{print $2}')
+default_config=$(cat notifier.conf | grep default_config | awk -F "=" '{print $2}')
 api=${default_api}
 config=${default_config}
 
@@ -26,14 +25,26 @@ get_chain_actor_list() {
  }' | jq '.rows[] | select(.action=="add") | .accounts[]' | sed -e 's|"||g' | sort | uniq`
     chain_actor_list_rem=`curl -s ${url} -X POST -d '{"scope":"theblacklist", "code":"theblacklist", "table":"theblacklist", "json": true, "limit": 100 \
  }' | jq '.rows[] | select(.action=="remove") | .accounts[]' | sed -e 's|"||g' | sort | uniq`
-    for i in $chain_actor_list_all
-     do
-      chain_actor_list="$chain_actor_list""actor-blacklist=$i""\n";
-     done
-    for j in $chain_actor_list_rem
-     do
-      chain_actor_list=`echo $chain_actor_list | sed "s/actor-blacklist=$j..//g" | sort`
-     done
+        if [ -n "$chain_actor_list_all" ];then
+        if [ -n "$chain_actor_list_rem" ];then
+           for i in $chain_actor_list_all
+            do
+             chain_actor_list="$chain_actor_list""actor-blacklist=$i""\n";
+            done
+           for j in $chain_actor_list_rem
+            do
+             chain_actor_list=`echo $chain_actor_list | sed "s/actor-blacklist=$j..//g" | sort`
+            done
+        else
+	 chain_actor_list="";
+         echo "serverdown";
+	 exit 1
+        fi
+	else
+	 chain_actor_list="";
+	 echo "serverdown";
+	 exit 1
+	fi
 }
 
 get_local_actor_list() {
