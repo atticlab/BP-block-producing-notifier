@@ -2,7 +2,6 @@
 
 default_api="https://api.eoslaomao.com"
 #default_api="https://api1.eosasia.one"
-#default_api="http://62.149.9.180:8888"
 default_config="/opt/EOSmainNet/config.ini"
 api=${default_api}
 config=${default_config}
