@@ -32,6 +32,11 @@ fi
 
 check_blacklist()
 {
+GETHASH=$($CHECKBLACKLIST);
+if [ -n "$GETHASH" ]; then
+if [ "$GETHASH" = "serverdown" ]; then
+   echo "server down"
+else
 SUCCESS=`$CHECKBLACKLIST | grep success | awk '{print $1}'`
 if [ "$SUCCESS" == "success:" ]; then
         HASH=`$CHECKBLACKLIST | grep success | awk '{print $2}'`
@@ -41,6 +46,8 @@ else
         ERR=`$CHECKBLACKLIST`
         echo $ERR
         curl -s -X POST https://api.telegram.org/bot$BOTKEY/sendMessage -d chat_id=$CHATID -d text="📮 $($CHECKBLACKLIST)"
+fi
+fi
 fi
 }
 
