@@ -55,7 +55,7 @@ check_change_blacklist()
 {
 EOSHASH="$BOTDIR/eos-hash"
 HASHFILE=$(cat $BOTDIR/eos-hash)
-if [ -z $HASHFILE ]; then
+if [ -z "$HASHFILE" ]; then
         echo "22" > ${EOSHASH};
 fi
 GETHASH=$($CHECKBLACKLIST);
